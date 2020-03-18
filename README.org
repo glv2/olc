@@ -1,0 +1,62 @@
+#+TITLE: olc
+
+This is a Common Lisp library to convert coordinates between Latitude/Longitude
+and Open Location Code.
+
+* API
+
+In the library, latitude and longitude are represented by real numbers
+(degrees), positive for northern latitude and eastern longitudes, and negative
+for southern latitude and western longitudes.
+
+
+#+BEGIN_SRC lisp
+(lat/lon->olc latitude longitude &optional extra-precision) -> string
+#+END_SRC
+
+Return the Open Location Code for the given /latitude/ and /longitude/. If
+/extra-precision/ is not ~nil~, an 11 digit code will be returned instead of
+a 10 digit one.
+
+
+#+BEGIN_SRC lisp
+(olc->lat/lon code) -> list
+#+END_SRC
+
+Return the latitude and longitude for the southwest corner of the given
+Open Location /Code/ square.
+
+* Examples
+
+Load the library:
+
+#+BEGIN_SRC lisp
+> (asdf:load-system "olc")
+...
+#+END_SRC
+
+
+Get the Open Locator Code for the Nairobi Youth Sports Organization and
+Information Centre in Kibera, Nairobi:
+
+#+BEGIN_SRC lisp
+> (olc:lat/lon->olc -1.314121 36.798829 t)
+"6GCRMQPX+9G4"
+#+END_SRC
+
+
+Get back the latitude and longitude of the Nairobi Youth Sports Organization
+and Information Centre in Kibera, Nairobi:
+
+#+BEGIN_SRC lisp
+> (olc:olc->lat/lon "6GCRMQPX+9G4")
+(-1.3141250000000042d0 36.7988125d0)
+#+END_SRC
+
+* Tests
+
+The tests require the /fiveam/ library.
+
+#+BEGIN_SRC lisp
+(asdf:test-system "olc")
+#+END_SRC
