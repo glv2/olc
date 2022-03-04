@@ -20,11 +20,12 @@ a 10 digit one.
 
 
 #+BEGIN_SRC lisp
-(olc->lat/lon code) -> list
+(olc->lat/lon code &optional center-p) -> list
 #+END_SRC
 
 Return the latitude and longitude for the southwest corner of the given
-Open Location /Code/ square.
+Open Location /Code/ square, or the center of the square if /center-p/ is
+not ~nil~.
 
 * Examples
 
@@ -49,8 +50,8 @@ Get back the latitude and longitude of the Nairobi Youth Sports Organization
 and Information Centre in Kibera, Nairobi:
 
 #+BEGIN_SRC lisp
-> (olc:olc->lat/lon "6GCRMQPX+9G4")
-(-1.3141250000000042d0 36.7988125d0)
+> (olc:olc->lat/lon "6GCRMQPX+9G4" t)
+(-1.3141125000000042d0 36.798828125d0)
 #+END_SRC
 
 * Tests

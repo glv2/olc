@@ -2,7 +2,7 @@
 Convert geographic coordinates between Latitude/Longitude and Open Location
 Code.
 
-Copyright 2020 Guillaume Le Vaillant
+Copyright 2020-2022 Guillaume Le Vaillant
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,18 +58,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                   (char letters x4)
                                   (if extra-precision extra "")))))))))))))))
 
-(defun olc->lat/lon (code)
+(defun olc->lat/lon (code &optional center-p)
   "Return the latitude and longitude for the southwest corner of the given
-Open Location Code square."
+Open Location Code square, or the center of the square if CENTER-P is not NIL."
   (check-type code string)
   (let* ((letters (load-time-value "23456789CFGHJMPQRVWX" t))
-         (code (case (length code)
-                 ((12) code)
-                 ((11) (concatenate 'string code "2"))
-                 ((10) (concatenate 'string code "22"))
-                 ((9) (concatenate 'string code "222"))
-                 (t (error "Invalid code: ~a" code))))
-         (code (substitute #\2 #\0 code :test #'char=))
+         (code (if center-p
+                   (case (length code)
+                     ((12) code)
+                     ((11) (concatenate 'string code "G"))
+                     ((10) (concatenate 'string code "GG"))
+                     ((9) (concatenate 'string code "GGG"))
+                     (t (error "Invalid code: ~a" code)))
+                   (case (length code)
+                     ((12) code)
+                     ((11) (concatenate 'string code "2"))
+                     ((10) (concatenate 'string code "22"))
+                     ((9) (concatenate 'string code "222"))
+                     (t (error "Invalid code: ~a" code)))))
+         (code (if center-p
+                   (substitute #\G #\0 code :test #'char=)
+                   (substitute #\2 #\0 code :test #'char=)))
          (y0 (position (char code 0) letters :test #'char-equal))
          (x0 (position (char code 1) letters :test #'char-equal))
          (y1 (position (char code 2) letters :test #'char-equal))
@@ -90,5 +99,7 @@ Open Location Code square."
                          (/ y4 8000) (/ y5 40000)))
                  (longitude (- lon 180.0d0))
                  (latitude (- lat 90.0d0)))
-            (list latitude longitude)))
+            (if center-p
+                (list (+ latitude 1/80000) (+ longitude 1/64000))
+                (list latitude longitude))))
         (error "Invalid code: ~a" code))))
