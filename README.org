@@ -1,5 +1,7 @@
 #+TITLE: olc
 
+The active repository is at https://codeberg.org/glv/olc
+
 This is a Common Lisp library to convert coordinates between Latitude/Longitude
 and Open Location Code.
 
